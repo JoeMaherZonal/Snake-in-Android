@@ -26,22 +26,22 @@ abstract class GameObject {
     }
 
     public void setY(int newY){
-        this.x = newY;
+        this.y = newY;
     }
 
     public void setWidth(int newWidth){
-        this.x = newWidth;
+        this.width = newWidth;
     }
 
     public void setHeight(int newHeight){
-        this.x = newHeight;
+        this.height = newHeight;
     }
 
     public int getX(){
         return this.x;
     }
 
-    public int getY(int newY){
+    public int getY(){
         return this.y;
     }
 

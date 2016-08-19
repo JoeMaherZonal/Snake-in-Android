@@ -15,7 +15,7 @@ public class Background extends GameObject implements Drawabale {
     public void draw(Canvas canvas){
         canvas.drawBitmap(image, x, y, null);
         if(x<0){
-            canvas.drawBitmap(image, x+GameController.WIDTH, y, null);
+            canvas.drawBitmap(image, x+GameController.WIDTH, y+GameController.HEIGHT, null);
         }
     }
 }

@@ -8,6 +8,18 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
 
+        <activity
+            android:name=".Game"
+            android:label="Snake Game"
+            android:screenOrientation="landscape">
+
+            <intent-filter>
+                <category android:name="android.intent.category.LAUNCHER"/>
+                <action android:name="android.intent.action.MAIN" />
+            </intent-filter>
+
+        </activity>
+
     </application>
 
 </manifest>
