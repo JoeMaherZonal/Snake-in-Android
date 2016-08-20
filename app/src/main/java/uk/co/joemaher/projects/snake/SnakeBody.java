@@ -5,8 +5,11 @@ import android.graphics.Canvas;
 
 public class SnakeBody extends GameObject implements Drawabale {
 
-    public SnakeBody(Bitmap image, int x, int y, int width, int height) {
+    DirectionType currentDirection;
+
+    public SnakeBody(Bitmap image, int x, int y, int width, int height, DirectionType currentDirection) {
         super(image, x, y, width, height);
+        this.currentDirection = currentDirection;
     }
 
     public void draw(Canvas canvas) {
@@ -14,5 +17,13 @@ public class SnakeBody extends GameObject implements Drawabale {
         if (x < 0) {
             canvas.drawBitmap(image, x + GameController.WIDTH, y + GameController.HEIGHT, null);
         }
+    }
+
+    public DirectionType getCurrentDirection(){
+        return currentDirection;
+    }
+
+    public void setCurrentDirection(DirectionType newCurrentDirection){
+        this.currentDirection = newCurrentDirection;
     }
 }

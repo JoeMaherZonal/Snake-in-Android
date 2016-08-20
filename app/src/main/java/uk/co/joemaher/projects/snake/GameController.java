@@ -11,7 +11,6 @@ import android.view.MotionEvent;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import java.util.ArrayList;
-import java.util.concurrent.TimeUnit;
 
 
 public class GameController extends SurfaceView implements SurfaceHolder.Callback{
@@ -51,6 +50,8 @@ public class GameController extends SurfaceView implements SurfaceHolder.Callbac
         }
     }
 
+    //create stuffs ----------------------------
+
     public void createWalls(){
         int x = 100;
         int y = 100;
@@ -83,6 +84,9 @@ public class GameController extends SurfaceView implements SurfaceHolder.Callbac
                 BitmapFactory.decodeResource(getResources(), R.drawable.snake_head_down),
                 BitmapFactory.decodeResource(getResources(), R.drawable.snake_head_left),
                 BitmapFactory.decodeResource(getResources(), R.drawable.snake_head_right),1000 ,1000, 95, 95);
+        snake.addToBody(getContext());
+        snake.addToBody(getContext());
+        snake.addToBody(getContext());
 
         createWalls();
         upButton = new Button(BitmapFactory.decodeResource(getResources(), R.drawable.up_arrow),BitmapFactory.decodeResource(getResources(), R.drawable.up_arrow_clicked), 2500, 800, 150, 150);
@@ -96,12 +100,6 @@ public class GameController extends SurfaceView implements SurfaceHolder.Callbac
 
     }
 
-    public void resetButtonImages(){
-        upButton.setImage(BitmapFactory.decodeResource(getResources(), R.drawable.up_arrow));
-        downButton.setImage(BitmapFactory.decodeResource(getResources(), R.drawable.down_arrow));
-        leftButton.setImage(BitmapFactory.decodeResource(getResources(), R.drawable.left_arrow));
-        rightButton.setImage(BitmapFactory.decodeResource(getResources(), R.drawable.right_arrow));
-    }
 
     public void checkForButtonClick(MotionEvent event){
         //up
@@ -137,9 +135,8 @@ public class GameController extends SurfaceView implements SurfaceHolder.Callbac
 
     @Override
     public boolean onTouchEvent(MotionEvent event){
-
-        Log.d("X", Float.toString(Math.round(event.getRawX())));
-        Log.d("Y", Float.toString(Math.round(event.getRawY())));
+//        Log.d("X", Float.toString(Math.round(event.getRawX())));
+//        Log.d("Y", Float.toString(Math.round(event.getRawY())));
 //        Log.d("WIDTH", Float.toString(getWidth()));
 //        Log.d("HEIGHT", Float.toString(getHeight()));
         //do when when touched?
@@ -148,6 +145,8 @@ public class GameController extends SurfaceView implements SurfaceHolder.Callbac
 
         return super.onTouchEvent(event);
     }
+
+    // update stuffs -----------------------------
 
     public void update(){
         checkforWallCollisions();
@@ -169,7 +168,7 @@ public class GameController extends SurfaceView implements SurfaceHolder.Callbac
             snake.setY(snake.getY() + 1400);
             return;
         }
-       if(snake.getY() > 1500){
+       if(snake.getY() > 1500) {
            System.out.println("Collision!!!!");
            snake.setY(snake.getY() - 1400);
            return;
@@ -185,6 +184,8 @@ public class GameController extends SurfaceView implements SurfaceHolder.Callbac
             return;
         }
     }
+
+    //draw stuffs -----------------------------------------------
 
     @Override
     public void draw(Canvas canvas){
