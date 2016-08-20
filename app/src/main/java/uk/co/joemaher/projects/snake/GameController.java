@@ -2,6 +2,7 @@ package uk.co.joemaher.projects.snake;
 
 
 import android.content.Context;
+import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Rect;
@@ -10,6 +11,7 @@ import android.view.MotionEvent;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import java.util.ArrayList;
+import java.util.concurrent.TimeUnit;
 
 
 public class GameController extends SurfaceView implements SurfaceHolder.Callback{
@@ -18,9 +20,12 @@ public class GameController extends SurfaceView implements SurfaceHolder.Callbac
     private GameThread thread;
     private Background background;
     private WallBlock block;
-    private Snake snakeHead;
-    private ArrayList<SnakeBody> snakeBody;
+    private Snake snake;
     private ArrayList<WallBlock> walls;
+    private Button upButton;
+    private Button downButton;
+    private Button leftButton;
+    private Button rightButton;
 
     public GameController(Context context){
         super(context);
@@ -49,7 +54,7 @@ public class GameController extends SurfaceView implements SurfaceHolder.Callbac
     public void createWalls(){
         int x = 100;
         int y = 100;
-        for(int i = 0; i < 20; i++){
+        for(int i = 0; i < 19; i++){
             walls.add(new WallBlock(BitmapFactory.decodeResource(getResources(), R.drawable.blue_block),x ,y, 100, 100));
             x+=100;
         }
@@ -57,7 +62,7 @@ public class GameController extends SurfaceView implements SurfaceHolder.Callbac
             walls.add(new WallBlock(BitmapFactory.decodeResource(getResources(), R.drawable.blue_block), x, y, 100, 100));
             y+=100;
         }
-        for(int i = 0; i < 20; i++){
+        for(int i = 0; i < 19; i++){
             walls.add(new WallBlock(BitmapFactory.decodeResource(getResources(), R.drawable.blue_block), x, y, 100, 100));
             x-=100;
         }
@@ -67,37 +72,118 @@ public class GameController extends SurfaceView implements SurfaceHolder.Callbac
         }
     }
 
+
     @Override
     public void surfaceCreated(SurfaceHolder holder){
         walls = new ArrayList<WallBlock>();
         background = new Background(BitmapFactory.decodeResource(getResources(), R.drawable.background),0 ,0, 0, 0);
         block = new WallBlock(BitmapFactory.decodeResource(getResources(), R.drawable.blue_block),500 ,500, 100, 100);
-        snakeHead = new Snake(BitmapFactory.decodeResource(getResources(), R.drawable.snake_head_up),1000 ,1000, 100, 100);
-        snakeBody = new ArrayList<SnakeBody>();
-        snakeBody.add(new SnakeBody(BitmapFactory.decodeResource(getResources(), R.drawable.snake_body),1000 ,1100, 100, 100));
+        snake = new Snake(BitmapFactory.decodeResource(getResources(), R.drawable.snake_head_up),
+                BitmapFactory.decodeResource(getResources(), R.drawable.snake_head_up),
+                BitmapFactory.decodeResource(getResources(), R.drawable.snake_head_down),
+                BitmapFactory.decodeResource(getResources(), R.drawable.snake_head_left),
+                BitmapFactory.decodeResource(getResources(), R.drawable.snake_head_right),1000 ,1000, 95, 95);
+
         createWalls();
+        upButton = new Button(BitmapFactory.decodeResource(getResources(), R.drawable.up_arrow),BitmapFactory.decodeResource(getResources(), R.drawable.up_arrow_clicked), 2500, 800, 150, 150);
+        downButton = new Button(BitmapFactory.decodeResource(getResources(), R.drawable.down_arrow),BitmapFactory.decodeResource(getResources(), R.drawable.down_arrow_clicked), 2500, 1400, 150, 150);
+        leftButton = new Button(BitmapFactory.decodeResource(getResources(), R.drawable.left_arrow),BitmapFactory.decodeResource(getResources(), R.drawable.left_arrow_clicked), 2200, 1100, 150, 150);
+        rightButton = new Button(BitmapFactory.decodeResource(getResources(), R.drawable.right_arrow),BitmapFactory.decodeResource(getResources(), R.drawable.right_arrow_clicked), 2800, 1100, 150, 150);
+
         //game loop starts
         thread.setRunning(true);
         thread.start();
 
     }
+
+    public void resetButtonImages(){
+        upButton.setImage(BitmapFactory.decodeResource(getResources(), R.drawable.up_arrow));
+        downButton.setImage(BitmapFactory.decodeResource(getResources(), R.drawable.down_arrow));
+        leftButton.setImage(BitmapFactory.decodeResource(getResources(), R.drawable.left_arrow));
+        rightButton.setImage(BitmapFactory.decodeResource(getResources(), R.drawable.right_arrow));
+    }
+
+    public void checkForButtonClick(MotionEvent event){
+        //up
+        if(event.getRawX() > 933 && event.getRawX() < 1042 && event.getRawY() > 353 && event.getRawY() < 482){
+            System.out.println("Up Button Clicked");
+            upButton.swapImages();
+            upButton.click();
+            snake.setDirection(DirectionType.UP);
+
+        }
+        //down
+        if(event.getRawX() > 933 && event.getRawX() < 1042 && event.getRawY() > 625 && event.getRawY() < 748){
+            System.out.println("Down Button Clicked");
+            downButton.swapImages();
+            downButton.click();
+            snake.setDirection(DirectionType.DOWN);
+        }
+        //left
+        if(event.getRawX() > 826 && event.getRawX() < 929 && event.getRawY() > 486 && event.getRawY() < 609){
+            System.out.println("Left Button Clicked");
+            leftButton.swapImages();
+            leftButton.click();
+            snake.setDirection(DirectionType.LEFT);
+        }
+        //right
+        if(event.getRawX() > 1054 && event.getRawX() < 1158 && event.getRawY() > 486 && event.getRawY() < 609){
+            System.out.println("Right Button Clicked");
+            rightButton.swapImages();
+            rightButton.click();
+            snake.setDirection(DirectionType.RIGHT);
+        }
+    }
+
     @Override
     public boolean onTouchEvent(MotionEvent event){
 
         Log.d("X", Float.toString(Math.round(event.getRawX())));
         Log.d("Y", Float.toString(Math.round(event.getRawY())));
-        Log.d("WIDTH", Float.toString(getWidth()));
-        Log.d("HEIGHT", Float.toString(getHeight()));
+//        Log.d("WIDTH", Float.toString(getWidth()));
+//        Log.d("HEIGHT", Float.toString(getHeight()));
         //do when when touched?
-        int heady = snakeHead.getY();
-        int bodyy = snakeBody.get(0).getY();
-        snakeHead.setY(heady - 100);
-        snakeBody.get(0).setY(bodyy - 100);
+
+        checkForButtonClick(event);
+
         return super.onTouchEvent(event);
     }
 
     public void update(){
-        //update shizznizz
+        checkforWallCollisions();
+        updateButtons();
+        snake.update();
+    }
+
+    public void updateButtons(){
+        upButton.updateImage();
+        downButton.updateImage();
+        leftButton.updateImage();
+        rightButton.updateImage();
+    }
+
+
+    public void checkforWallCollisions(){
+        if(snake.getY() < 200){
+            System.out.println("Collision!!!!");
+            snake.setY(snake.getY() + 1400);
+            return;
+        }
+       if(snake.getY() > 1500){
+           System.out.println("Collision!!!!");
+           snake.setY(snake.getY() - 1400);
+           return;
+        }
+        if(snake.getX() < 200){
+            System.out.println("Collision!!!!");
+            snake.setX(snake.getX() + 1800);
+            return;
+        }
+        if(snake.getX() > 1900){
+            System.out.println("Collision!!!!");
+            snake.setX(snake.getX() - 1800);
+            return;
+        }
     }
 
     @Override
@@ -111,10 +197,17 @@ public class GameController extends SurfaceView implements SurfaceHolder.Callbac
             //call draw on everything here
             background.draw(canvas);
             drawWalls(canvas);
-            snakeHead.draw(canvas);
-            snakeBody.get(0).draw(canvas);
+            drawControls(canvas);
+            snake.draw(canvas);
             canvas.restoreToCount(savedState);
         }
+    }
+
+    public void drawControls(Canvas canvas){
+        upButton.draw(canvas);
+        downButton.draw(canvas);
+        rightButton.draw(canvas);
+        leftButton.draw(canvas);
     }
 
     public void drawWalls(Canvas canvas){

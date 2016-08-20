@@ -21,6 +21,10 @@ abstract class GameObject {
         this.height = height;
     }
 
+    public void setImage(Bitmap image){
+        this.image = image;
+    }
+
     public void setX(int newX){
         this.x = newX;
     }
