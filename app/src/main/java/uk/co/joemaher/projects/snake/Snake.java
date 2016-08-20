@@ -210,4 +210,15 @@ public class Snake extends GameObject implements Drawabale {
         }
         return false;
     }
+
+    public double getSpeed(){
+        int x = (int)Math.round(this.speed);
+
+        return (500 - x) / 5 + 1;
+    }
+
+    public int getScore(){
+        int score = (int)(body.size() * getSpeed());
+        return score - 3;
+    }
 }

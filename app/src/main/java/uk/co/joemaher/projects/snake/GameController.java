@@ -27,6 +27,7 @@ public class GameController extends SurfaceView implements SurfaceHolder.Callbac
     private Button downButton;
     private Button leftButton;
     private Button rightButton;
+    private Button pause;
     private ItemBag itemBag;
     private Paint paint;
 
@@ -81,7 +82,7 @@ public class GameController extends SurfaceView implements SurfaceHolder.Callbac
     @Override
     public void surfaceCreated(SurfaceHolder holder){
         walls = new ArrayList<WallBlock>();
-        background = new Background(BitmapFactory.decodeResource(getResources(), R.drawable.background),0 ,0, 0, 0);
+        background = new Background(BitmapFactory.decodeResource(getResources(), R.drawable.new_background),0 ,0, 0, 0);
         itemBag = new ItemBag();
         createButtons();
         createWalls();
@@ -89,7 +90,6 @@ public class GameController extends SurfaceView implements SurfaceHolder.Callbac
         snake.addToBody(getContext());
         snake.addToBody(getContext());
         snake.addToBody(getContext());
-        itemBag.addOrangeBlock(getContext(), 1900, 1500);
         // Change the brush color
         paint = new Paint();
         paint.setColor(Color.argb(255, 249, 129, 0));
@@ -114,12 +114,12 @@ public class GameController extends SurfaceView implements SurfaceHolder.Callbac
         downButton = new Button(BitmapFactory.decodeResource(getResources(), R.drawable.down_arrow),BitmapFactory.decodeResource(getResources(), R.drawable.down_arrow_clicked), 2500, 1400, 150, 150);
         leftButton = new Button(BitmapFactory.decodeResource(getResources(), R.drawable.left_arrow),BitmapFactory.decodeResource(getResources(), R.drawable.left_arrow_clicked), 2200, 1100, 150, 150);
         rightButton = new Button(BitmapFactory.decodeResource(getResources(), R.drawable.right_arrow),BitmapFactory.decodeResource(getResources(), R.drawable.right_arrow_clicked), 2800, 1100, 150, 150);
-
+        pause = new Button(BitmapFactory.decodeResource(getResources(), R.drawable.pause),BitmapFactory.decodeResource(getResources(), R.drawable.pause_clicked), 3000, 100, 100, 100);
     }
 
     public void checkForButtonClick(MotionEvent event){
         //up
-        if(event.getRawX() > 933 && event.getRawX() < 1042 && event.getRawY() > 353 && event.getRawY() < 482){
+        if(event.getRawX() > 935 && event.getRawX() < 1049 && event.getRawY() > 325 && event.getRawY() < 431){
             System.out.println("Up Button Clicked");
             upButton.swapImages();
             upButton.click();
@@ -127,7 +127,7 @@ public class GameController extends SurfaceView implements SurfaceHolder.Callbac
             return;
         }
         //down
-        if(event.getRawX() > 933 && event.getRawX() < 1042 && event.getRawY() > 625 && event.getRawY() < 748){
+        if(event.getRawX() > 933 && event.getRawX() < 1042 && event.getRawY() > 569 && event.getRawY() < 665){
             System.out.println("Down Button Clicked");
             downButton.swapImages();
             downButton.click();
@@ -135,7 +135,7 @@ public class GameController extends SurfaceView implements SurfaceHolder.Callbac
             return;
         }
         //left
-        if(event.getRawX() > 826 && event.getRawX() < 929 && event.getRawY() > 486 && event.getRawY() < 609){
+        if(event.getRawX() > 826 && event.getRawX() < 929 && event.getRawY() > 444 && event.getRawY() < 558){
             System.out.println("Left Button Clicked");
             leftButton.swapImages();
             leftButton.click();
@@ -143,7 +143,7 @@ public class GameController extends SurfaceView implements SurfaceHolder.Callbac
             return;
         }
         //right
-        if(event.getRawX() > 1054 && event.getRawX() < 1158 && event.getRawY() > 486 && event.getRawY() < 609){
+        if(event.getRawX() > 1054 && event.getRawX() < 1158 && event.getRawY() > 444 && event.getRawY() < 556){
             System.out.println("Right Button Clicked");
             rightButton.swapImages();
             rightButton.click();
@@ -155,12 +155,14 @@ public class GameController extends SurfaceView implements SurfaceHolder.Callbac
     @Override
     public boolean onTouchEvent(MotionEvent event){
         checkForButtonClick(event);
+        System.out.println("X:" + Math.floor(event.getRawX()) + " Y:" +  Math.floor(event.getRawY()));
         return super.onTouchEvent(event);
     }
 
     // update stuffs -----------------------------
 
     public void update(){
+        checkForGameOver();
         snake.checkforWallCollisions();
         snake.checkForCollisionWithItem(itemBag, getContext());
         updateButtons();
@@ -192,7 +194,8 @@ public class GameController extends SurfaceView implements SurfaceHolder.Callbac
             drawControls(canvas);
             snake.draw(canvas);
             itemBag.draw(canvas);
-            canvas.drawText("Hello Android", 1800, 400, paint);
+            canvas.drawText("Score: " + snake.getScore(), 2200, 300, paint);
+            canvas.drawText("Speed: " + snake.getSpeed(), 2200, 500, paint);
             canvas.restoreToCount(savedState);
         }
     }
@@ -202,7 +205,10 @@ public class GameController extends SurfaceView implements SurfaceHolder.Callbac
         downButton.draw(canvas);
         rightButton.draw(canvas);
         leftButton.draw(canvas);
+        pause.draw((canvas));
     }
+
+
 
     public void drawWalls(Canvas canvas){
         for(int i = 0; i < walls.size(); i++){
@@ -216,6 +222,14 @@ public class GameController extends SurfaceView implements SurfaceHolder.Callbac
             return true;
         }
         return false;
+    }
+
+    public void checkForGameOver(){
+        for(int i = 0; i < snake.getBody().size(); i ++){
+            if(collision(snake, snake.getBody().get(i))){
+                System.out.println("Game over!");
+            }
+        }
     }
 
 }
