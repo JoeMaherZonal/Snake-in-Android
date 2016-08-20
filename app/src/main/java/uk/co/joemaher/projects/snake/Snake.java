@@ -4,8 +4,7 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
-
-import java.lang.reflect.Array;
+import android.graphics.Rect;
 import java.util.ArrayList;
 
 public class Snake extends GameObject implements Drawabale {
@@ -18,6 +17,7 @@ public class Snake extends GameObject implements Drawabale {
     private Bitmap downImage;
     private Bitmap leftImage;
     private Bitmap rightImage;
+
 
     public Snake(Bitmap image, Bitmap upImage, Bitmap downImage, Bitmap leftImage, Bitmap rightImage, int x, int y, int width, int height) {
         super(image, x, y, width, height);
@@ -167,5 +167,47 @@ public class Snake extends GameObject implements Drawabale {
                 }
         }
         this.body.add(new SnakeBody(BitmapFactory.decodeResource(context.getResources(), R.drawable.snake_body), x, y, 100, 100, direction));
+    }
+
+    public void checkforWallCollisions(){
+        if(this.getY() < 200){
+            this.setY(this.getY() + 1400);
+            return;
+        }
+        if(this.getY() > 1500) {
+            this.setY(this.getY() - 1400);
+            return;
+        }
+        if(this.getX() < 200){
+            this.setX(this.getX() + 1800);
+            return;
+        }
+        if(this.getX() > 1900){
+            this.setX(this.getX() - 1800);
+            return;
+        }
+    }
+
+    public void checkForCollisionWithItem(ItemBag itemBag, Context context){
+        for(int i = 0; i < itemBag.getBag().size(); i++){
+            if(collision(this, itemBag.getBag().get(i))){
+                this.addToBody(context);
+                itemBag.removeItem(i);
+                increaseSpeed();
+            }
+        }
+    }
+
+
+    public void increaseSpeed(){
+        this.speed = this.speed * 0.99;
+    }
+
+    public boolean collision(GameObject a, GameObject b){
+        if(Rect.intersects(a.getRectangle(), b.getRectangle()))
+        {
+            return true;
+        }
+        return false;
     }
 }
