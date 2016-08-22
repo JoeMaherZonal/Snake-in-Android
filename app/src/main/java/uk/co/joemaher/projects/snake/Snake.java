@@ -129,6 +129,7 @@ public class Snake extends GameObject implements Drawabale {
         int x = 0;
         int y = 0;
         DirectionType direction = currentDirection;
+
         if (body.size() == 0) {
             switch (currentDirection) {
                 case UP:
@@ -224,6 +225,6 @@ public class Snake extends GameObject implements Drawabale {
 
     public int getScore(){
         int score = (int)(body.size() * getSpeed());
-        return score - 3;
+        return score;
     }
 }

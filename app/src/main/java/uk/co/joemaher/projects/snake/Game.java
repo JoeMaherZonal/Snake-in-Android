@@ -18,7 +18,9 @@ public class Game extends Activity {
         super.onCreate(savedInstanceState);
         requestWindowFeature(Window.FEATURE_NO_TITLE);
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
-        setContentView(new GameController(this));
-
+        Intent intent = getIntent();
+        Bundle extras = intent.getExtras();
+        String name = extras.getString("playerName");
+        setContentView(new GameController(this, name));
     }
 }

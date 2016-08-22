@@ -27,4 +27,9 @@ public class Score {
     public int getScore(){
         return this.score;
     }
+
+    public String prettyPrint(){
+        String prettyString = " " + getName() + "  " + getScore();
+        return prettyString;
+    }
 }

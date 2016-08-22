@@ -34,6 +34,13 @@
 
         </activity>
 
+        <activity
+            android:name=".HighScores"
+            android:label="Snake Game"
+            android:screenOrientation="landscape">
+
+        </activity>
+
 
     </application>
 

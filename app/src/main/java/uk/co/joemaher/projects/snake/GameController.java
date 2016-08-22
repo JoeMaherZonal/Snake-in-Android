@@ -8,7 +8,6 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Rect;
-import android.util.Log;
 import android.view.MotionEvent;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
@@ -16,6 +15,7 @@ import java.util.ArrayList;
 
 
 public class GameController extends SurfaceView implements SurfaceHolder.Callback{
+
     public static final int WIDTH = 3200;
     public static final int HEIGHT = 2000;
     private GameThread thread;
@@ -33,13 +33,15 @@ public class GameController extends SurfaceView implements SurfaceHolder.Callbac
     private Paint paint;
     private Button scoreText;
     private boolean gamePaused;
+    private String name;
 
-    public GameController(Context context){
+    public GameController(Context context, String name){
         super(context);
         getHolder().addCallback(this);
         this.thread = new GameThread(getHolder(), this);
         setFocusable(true);
         this.gamePaused = false;
+        this.name = name;
     }
 
     @Override
@@ -61,6 +63,20 @@ public class GameController extends SurfaceView implements SurfaceHolder.Callbac
 
     //create stuffs ----------------------------
 
+    @Override
+    public void surfaceCreated(SurfaceHolder holder){
+        walls = new ArrayList<WallBlock>();
+        background = new Background(BitmapFactory.decodeResource(getResources(), R.drawable.new_background),0 ,0, 0, 0);
+        itemBag = new ItemBag();
+        createButtons();
+        createWalls();
+        createSnake();
+        setDrawableText();
+        //game loop starts here
+        thread.setRunning(true);
+        thread.start();
+    }
+
     public void createWalls(){
         int x = 100;
         int y = 100;
@@ -80,21 +96,6 @@ public class GameController extends SurfaceView implements SurfaceHolder.Callbac
             walls.add(new WallBlock(BitmapFactory.decodeResource(getResources(), R.drawable.blue_block), x, y, 100, 100));
             y-=100;
         }
-    }
-
-
-    @Override
-    public void surfaceCreated(SurfaceHolder holder){
-        walls = new ArrayList<WallBlock>();
-        background = new Background(BitmapFactory.decodeResource(getResources(), R.drawable.new_background),0 ,0, 0, 0);
-        itemBag = new ItemBag();
-        createButtons();
-        createWalls();
-        createSnake();
-        setDrawableText();
-        //game loop starts
-        thread.setRunning(true);
-        thread.start();
     }
 
     public void setDrawableText(){
@@ -122,6 +123,7 @@ public class GameController extends SurfaceView implements SurfaceHolder.Callbac
         scoreText = new Button(BitmapFactory.decodeResource(getResources(), R.drawable.score_text),BitmapFactory.decodeResource(getResources(), R.drawable.score_text), 2200, 450, 100, 100);
 
     }
+        //Button onclick events ---------------------
 
     public void checkForButtonClick(MotionEvent event){
         //up
@@ -172,6 +174,11 @@ public class GameController extends SurfaceView implements SurfaceHolder.Callbac
             test.updateHighScores(getContext(), newScore1);
             test.updateHighScores(getContext(), newScore2);
             System.out.println("Paused:" + gamePaused);
+        }
+        //exit game
+        if(event.getRawX() > 822 && event.getRawX() < 892 && event.getRawY() > 44 && event.getRawY() < 112){
+            forceGameOver();
+            return;
         }
     }
 
@@ -256,11 +263,26 @@ public class GameController extends SurfaceView implements SurfaceHolder.Callbac
         for(int i = 0; i < snake.getBody().size(); i ++){
             if(collision(snake, snake.getBody().get(i))){
                 gamePaused = true;
+                updateHighScores();
                 Intent myIntent = new Intent(getContext(), GameOver.class);
                 myIntent.putExtra("score", "" + snake.getScore());
                 getContext().startActivity(myIntent);
             }
         }
+    }
+
+    public void forceGameOver(){
+        updateHighScores();
+        Intent myIntent = new Intent(getContext(), GameOver.class);
+        myIntent.putExtra("score", "" + snake.getScore());
+        myIntent.putExtra("name", this.name);
+        getContext().startActivity(myIntent);
+    }
+
+    public void updateHighScores(){
+        SavedTextPreferences savedHighScores = new SavedTextPreferences();
+        Score score = new Score(this.name, snake.getScore());
+        savedHighScores.updateHighScores(getContext(), score);
     }
 
 }
