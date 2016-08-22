@@ -35,64 +35,68 @@ public class Snake extends GameObject implements Drawabale {
         for(int i = 0; i < body.size();i++){
             canvas.drawBitmap(body.get(i).getImage(), body.get(i).getX(), body.get(i).getY(), null);
         }
-//        if (x < 0) {
-//            canvas.drawBitmap(image, x + GameController.WIDTH, y + GameController.HEIGHT, null);
-//        }
     }
 
-    public void update() {
+    public void update(Context context) {
         long elapsed = (System.nanoTime() - this.timeSinceUpdate) / 1000000;
         Snake holder = this;
         SnakeBody bodyHolder;
 
         if (elapsed > speed) {
             if (currentDirection == DirectionType.UP) {
-                updateBody();
+                updateBody(context);
                 setY(getY() - 100);
             }
             if (currentDirection == DirectionType.DOWN) {
-                updateBody();
+                updateBody(context);
                 setY(getY() + 100);
             }
             if (currentDirection == DirectionType.LEFT) {
-                updateBody();
+                updateBody(context);
                 setX(getX() - 100);
             }
             if (currentDirection == DirectionType.RIGHT) {
-                updateBody();
+                updateBody(context);
                 setX(getX() + 100);
             }
             this.timeSinceUpdate = System.nanoTime();
         }
     }
 
-    public void updateBody(){
+    public void updateBody(Context context){
         if(body.size() == 0){return;}
         DirectionType directionHolder = currentDirection;
         int xHolder = this.x;
         int yHolder = this.y;
+        Bitmap imageHolder = BitmapFactory.decodeResource(context.getResources(), R.drawable.snake_body);
         DirectionType directionHolder2 = currentDirection;
         int xHolder2;
         int yHolder2;
+        Bitmap imageHolder2;
 
         for(int i = 0; i<body.size();i++){
             if(i == 0){
                 xHolder = body.get(i).getX();
                 yHolder = body.get(i).getY();
                 directionHolder = body.get(i).getCurrentDirection();
+                imageHolder = body.get(i).getImage();
                 body.get(i).setX(this.x);
                 body.get(i).setY(this.y);
                 body.get(i).setCurrentDirection(this.currentDirection);
+                body.get(i).setImage(BitmapFactory.decodeResource(context.getResources(), R.drawable.snake_body));
             }else {
                 xHolder2 = body.get(i).getX();
                 yHolder2 = body.get(i).getY();
                 directionHolder2 = body.get(i).getCurrentDirection();
+                imageHolder2 = body.get(i).getImage();
                 body.get(i).setX(xHolder);
                 body.get(i).setY(yHolder);
                 body.get(i).setCurrentDirection(directionHolder);
+                body.get(i).setImage(imageHolder);
                 xHolder = xHolder2;
                 yHolder = yHolder2;
                 directionHolder = directionHolder2;
+                imageHolder = imageHolder2;
             }
         }
     }
@@ -167,6 +171,7 @@ public class Snake extends GameObject implements Drawabale {
                 }
         }
         this.body.add(new SnakeBody(BitmapFactory.decodeResource(context.getResources(), R.drawable.snake_body), x, y, 100, 100, direction));
+        this.body.get(0).setImage(BitmapFactory.decodeResource(context.getResources(), R.drawable.snake_body_full));
     }
 
     public void checkforWallCollisions(){

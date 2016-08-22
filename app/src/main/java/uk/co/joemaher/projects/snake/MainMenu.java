@@ -13,6 +13,8 @@ import android.view.WindowManager;
  */
 public class MainMenu extends Activity {
     android.widget.Button startGameBtn;
+    android.widget.Button highScoreBtn;
+    android.widget.Button settingsBtn;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -23,6 +25,18 @@ public class MainMenu extends Activity {
 //        setContentView(new GameController(this));
 
         startGameBtn = (android.widget.Button)findViewById(R.id.new_game_btn);
+        highScoreBtn = (android.widget.Button)findViewById(R.id.high_scores_btn);
+        settingsBtn = (android.widget.Button)findViewById(R.id.settings_btn);
+
+        startGameBtn.setX(20);
+        startGameBtn.setY(400);
+
+        highScoreBtn.setX(20);
+        highScoreBtn.setY(410);
+
+        settingsBtn.setX(20);
+        settingsBtn.setY(420);
+
         startGameBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

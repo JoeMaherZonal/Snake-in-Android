@@ -2,7 +2,7 @@ package uk.co.joemaher.projects.snake;
 
 
 import android.content.Context;
-import android.graphics.Bitmap;
+import android.content.Intent;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
@@ -27,15 +27,19 @@ public class GameController extends SurfaceView implements SurfaceHolder.Callbac
     private Button downButton;
     private Button leftButton;
     private Button rightButton;
-    private Button pause;
+    private Button pauseButton;
+    private Button exitGameButton;
     private ItemBag itemBag;
     private Paint paint;
+    private Button scoreText;
+    private boolean gamePaused;
 
     public GameController(Context context){
         super(context);
         getHolder().addCallback(this);
-        thread = new GameThread(getHolder(), this);
+        this.thread = new GameThread(getHolder(), this);
         setFocusable(true);
+        this.gamePaused = false;
     }
 
     @Override
@@ -87,17 +91,16 @@ public class GameController extends SurfaceView implements SurfaceHolder.Callbac
         createButtons();
         createWalls();
         createSnake();
-        snake.addToBody(getContext());
-        snake.addToBody(getContext());
-        snake.addToBody(getContext());
-        // Change the brush color
-        paint = new Paint();
-        paint.setColor(Color.argb(255, 249, 129, 0));
-        paint.setTextSize(100);
-
+        setDrawableText();
         //game loop starts
         thread.setRunning(true);
         thread.start();
+    }
+
+    public void setDrawableText(){
+        paint = new Paint();
+        paint.setColor(Color.argb(255, 249, 129, 0));
+        paint.setTextSize(100);
     }
 
     public void createSnake(){
@@ -114,7 +117,10 @@ public class GameController extends SurfaceView implements SurfaceHolder.Callbac
         downButton = new Button(BitmapFactory.decodeResource(getResources(), R.drawable.down_arrow),BitmapFactory.decodeResource(getResources(), R.drawable.down_arrow_clicked), 2500, 1400, 150, 150);
         leftButton = new Button(BitmapFactory.decodeResource(getResources(), R.drawable.left_arrow),BitmapFactory.decodeResource(getResources(), R.drawable.left_arrow_clicked), 2200, 1100, 150, 150);
         rightButton = new Button(BitmapFactory.decodeResource(getResources(), R.drawable.right_arrow),BitmapFactory.decodeResource(getResources(), R.drawable.right_arrow_clicked), 2800, 1100, 150, 150);
-        pause = new Button(BitmapFactory.decodeResource(getResources(), R.drawable.pause),BitmapFactory.decodeResource(getResources(), R.drawable.pause_clicked), 3000, 100, 100, 100);
+        pauseButton = new Button(BitmapFactory.decodeResource(getResources(), R.drawable.pause),BitmapFactory.decodeResource(getResources(), R.drawable.pause_clicked), 2900, 100, 100, 100);
+        exitGameButton = new Button(BitmapFactory.decodeResource(getResources(), R.drawable.exit_game),BitmapFactory.decodeResource(getResources(), R.drawable.exit_game), 2200, 100, 100, 100);
+        scoreText = new Button(BitmapFactory.decodeResource(getResources(), R.drawable.score_text),BitmapFactory.decodeResource(getResources(), R.drawable.score_text), 2200, 450, 100, 100);
+
     }
 
     public void checkForButtonClick(MotionEvent event){
@@ -150,25 +156,46 @@ public class GameController extends SurfaceView implements SurfaceHolder.Callbac
             snake.setDirection(DirectionType.RIGHT);
             return;
         }
+
+        //pause/play
+        if(event.getRawX() > 1080 && event.getRawX() < 1155 && event.getRawY() > 44 && event.getRawY() < 119){
+            System.out.println("Pause/Play clicked");
+            pauseButton.swapImages();
+            if(gamePaused == false){
+                this.gamePaused = true;
+            }else{
+                this.gamePaused = false;
+            }
+            SavedTextPreferences test = new SavedTextPreferences();
+            Score newScore1 = new Score("Joe", 20);
+            Score newScore2 = new Score("Charlie", 40);
+            test.updateHighScores(getContext(), newScore1);
+            test.updateHighScores(getContext(), newScore2);
+            System.out.println("Paused:" + gamePaused);
+        }
     }
 
     @Override
     public boolean onTouchEvent(MotionEvent event){
         checkForButtonClick(event);
-        System.out.println("X:" + Math.floor(event.getRawX()) + " Y:" +  Math.floor(event.getRawY()));
+        System.out.println("X:" + Math.floor(event.getRawX()) + " Y:" + Math.floor(event.getRawY()));
         return super.onTouchEvent(event);
     }
 
     // update stuffs -----------------------------
 
     public void update(){
-        checkForGameOver();
-        snake.checkforWallCollisions();
-        snake.checkForCollisionWithItem(itemBag, getContext());
-        updateButtons();
-        snake.update();
-        itemBag.update(getContext());
-        itemBag.checkForInvalidSpawns(snake);
+        if(gamePaused == false) {
+            checkForGameOver();
+            snake.checkforWallCollisions();
+            snake.checkForCollisionWithItem(itemBag, getContext());
+            updateButtons();
+            snake.update(getContext());
+            itemBag.update(getContext());
+            itemBag.checkForInvalidSpawns(snake);
+        }else{
+            return;
+        }
     }
 
     public void updateButtons(){
@@ -194,8 +221,8 @@ public class GameController extends SurfaceView implements SurfaceHolder.Callbac
             drawControls(canvas);
             snake.draw(canvas);
             itemBag.draw(canvas);
-            canvas.drawText("Score: " + snake.getScore(), 2200, 300, paint);
-            canvas.drawText("Speed: " + snake.getSpeed(), 2200, 500, paint);
+            canvas.drawText("" + snake.getScore(), 2600, 535, paint);
+//            canvas.drawText("Speed: " + snake.getSpeed(), 2200, 500, paint);
             canvas.restoreToCount(savedState);
         }
     }
@@ -205,9 +232,10 @@ public class GameController extends SurfaceView implements SurfaceHolder.Callbac
         downButton.draw(canvas);
         rightButton.draw(canvas);
         leftButton.draw(canvas);
-        pause.draw((canvas));
+        pauseButton.draw(canvas);
+        exitGameButton.draw(canvas);
+        scoreText.draw(canvas);
     }
-
 
 
     public void drawWalls(Canvas canvas){
@@ -224,10 +252,13 @@ public class GameController extends SurfaceView implements SurfaceHolder.Callbac
         return false;
     }
 
-    public void checkForGameOver(){
+   public void checkForGameOver(){
         for(int i = 0; i < snake.getBody().size(); i ++){
             if(collision(snake, snake.getBody().get(i))){
-                System.out.println("Game over!");
+                gamePaused = true;
+                Intent myIntent = new Intent(getContext(), GameOver.class);
+                myIntent.putExtra("score", "" + snake.getScore());
+                getContext().startActivity(myIntent);
             }
         }
     }

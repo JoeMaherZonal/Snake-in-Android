@@ -35,6 +35,10 @@ public class Button extends GameObject implements Drawabale {
         }
     }
 
+    public void unclick(){
+        this.clicked = false;
+    }
+
 
     public void swapImages(){
         Bitmap imageHolder = this.image;
@@ -51,6 +55,10 @@ public class Button extends GameObject implements Drawabale {
 
     public void click(){
         this.clicked = true;
+    }
+
+    public boolean isClicked(){
+        return this.clicked;
     }
 
 }
