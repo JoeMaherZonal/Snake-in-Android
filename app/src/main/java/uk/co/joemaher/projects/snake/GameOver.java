@@ -32,6 +32,7 @@ public class GameOver extends Activity {
         String name = extras.getString("name");
         scoreView.setText(name + "'s Points: " + score);
 
+
         mainMenuBtn = (android.widget.Button)findViewById(R.id.return_to_main_btn);
 
         mainMenuBtn.setX(20);

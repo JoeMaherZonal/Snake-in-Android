@@ -6,7 +6,7 @@ import android.graphics.Canvas;
 /**
  * Created by user on 19/08/2016.
  */
-public class Background extends GameObject implements Drawabale {
+public class Background extends GameObject {
 
     public Background(Bitmap image, int x, int y, int width, int height){
         super(image, x, y, width, height);

@@ -12,6 +12,7 @@ import android.view.MotionEvent;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import java.util.ArrayList;
+import java.util.Random;
 
 
 public class GameController extends SurfaceView implements SurfaceHolder.Callback{
@@ -106,10 +107,10 @@ public class GameController extends SurfaceView implements SurfaceHolder.Callbac
 
     public void createSnake(){
         snake = new Snake(BitmapFactory.decodeResource(getResources(), R.drawable.snake_head_up),
-                BitmapFactory.decodeResource(getResources(), R.drawable.snake_head_up),
-                BitmapFactory.decodeResource(getResources(), R.drawable.snake_head_down),
-                BitmapFactory.decodeResource(getResources(), R.drawable.snake_head_left),
-                BitmapFactory.decodeResource(getResources(), R.drawable.snake_head_right),1000 ,1000, 95, 95);
+            BitmapFactory.decodeResource(getResources(), R.drawable.snake_head_up),
+            BitmapFactory.decodeResource(getResources(), R.drawable.snake_head_down),
+            BitmapFactory.decodeResource(getResources(), R.drawable.snake_head_left),
+            BitmapFactory.decodeResource(getResources(), R.drawable.snake_head_right),1000 ,1000, 95, 95);
     }
 
 
@@ -163,7 +164,7 @@ public class GameController extends SurfaceView implements SurfaceHolder.Callbac
         if(event.getRawX() > 1080 && event.getRawX() < 1155 && event.getRawY() > 44 && event.getRawY() < 119){
             System.out.println("Pause/Play clicked");
             pauseButton.swapImages();
-            if(gamePaused == false){
+            if(!gamePaused){
                 this.gamePaused = true;
             }else{
                 this.gamePaused = false;
@@ -178,7 +179,6 @@ public class GameController extends SurfaceView implements SurfaceHolder.Callbac
         //exit game
         if(event.getRawX() > 822 && event.getRawX() < 892 && event.getRawY() > 44 && event.getRawY() < 112){
             forceGameOver();
-            return;
         }
     }
 
@@ -189,19 +189,51 @@ public class GameController extends SurfaceView implements SurfaceHolder.Callbac
         return super.onTouchEvent(event);
     }
 
-    // update stuffs -----------------------------
+    // update game items -----------------------------
 
     public void update(){
-        if(gamePaused == false) {
+        if(!gamePaused) {
+            int snakesize = snake.getBody().size();
             checkForGameOver();
-            snake.checkforWallCollisions();
+            checkforWallCollisions(this.walls);
             snake.checkForCollisionWithItem(itemBag, getContext());
             updateButtons();
             snake.update(getContext());
-            itemBag.update(getContext());
-            itemBag.checkForInvalidSpawns(snake);
-        }else{
-            return;
+            if(snake.getBody().size() > snakesize){
+                manageWalls();
+            }
+            itemBag.update(getContext(), snake);
+        }
+    }
+
+    public void checkforWallCollisions(ArrayList<WallBlock> walls){
+
+        for(int i = 0; i < walls.size(); i ++){
+
+            if( collision(snake, walls.get(i)) && !walls.get(i).isSafe){
+                forceGameOver();
+                break;
+            }
+
+            if( collision(snake, walls.get(i)) && walls.get(i).isSafe() && snake.getY() < 200){
+                snake.setY(snake.getY() + 1400);
+                break;
+            }
+
+            if(collision(snake, walls.get(i)) && walls.get(i).isSafe() && snake.getY() > 1500) {
+                snake.setY(snake.getY() - 1400);
+                break;
+            }
+
+            if(collision(snake, walls.get(i)) && walls.get(i).isSafe() && snake.getX() < 200){
+                snake.setX(snake.getX() + 1800);
+                break;
+            }
+
+            if(collision(snake, walls.get(i)) && walls.get(i).isSafe() && snake.getX() > 1900){
+                snake.setX(snake.getX() - 1800);
+                break;
+            }
         }
     }
 
@@ -212,24 +244,36 @@ public class GameController extends SurfaceView implements SurfaceHolder.Callbac
         rightButton.updateImage();
     }
 
-    //draw stuffs -----------------------------------------------
+    public void manageWalls(){
+        int snakeLength = snake.getBody().size();
+        int wallsLength = this.walls.size();
+        if(snakeLength > 15){
+            Random generator = new Random();
+            int randNum = generator.nextInt(wallsLength);
+            this.walls.get(randNum).makeUnsafe(getContext());
+        }
+    }
+
+    //draw game items -----------------------------------------------
 
     @Override
     public void draw(Canvas canvas){
         super.draw(canvas);
+        //scales to screen size
         final float scaleFactorX = (float)getWidth()/WIDTH;
         final float scaleFactorY = (float)getHeight()/HEIGHT;
         if(canvas!=null) {
             final int savedState = canvas.save();
             canvas.scale(scaleFactorX, scaleFactorY);
-            //call draw on everything here
+            //Drawing everything here
             background.draw(canvas);
             drawWalls(canvas);
             drawControls(canvas);
             snake.draw(canvas);
             itemBag.draw(canvas);
             canvas.drawText("" + snake.getScore(), 2600, 535, paint);
-//            canvas.drawText("Speed: " + snake.getSpeed(), 2200, 500, paint);
+            //canvas.drawText("Speed: " + snake.getSpeed(), 2200, 500, paint);
+            //Must restore canvas to original size or it will continue to scale with each loop
             canvas.restoreToCount(savedState);
         }
     }
@@ -252,8 +296,7 @@ public class GameController extends SurfaceView implements SurfaceHolder.Callbac
     }
 
     public boolean collision(GameObject a, GameObject b){
-        if(Rect.intersects(a.getRectangle(), b.getRectangle()))
-        {
+        if(Rect.intersects(a.getRectangle(), b.getRectangle())){
             return true;
         }
         return false;
@@ -266,12 +309,14 @@ public class GameController extends SurfaceView implements SurfaceHolder.Callbac
                 updateHighScores();
                 Intent myIntent = new Intent(getContext(), GameOver.class);
                 myIntent.putExtra("score", "" + snake.getScore());
+                myIntent.putExtra("name", this.name);
                 getContext().startActivity(myIntent);
             }
         }
     }
 
     public void forceGameOver(){
+        gamePaused = true;
         updateHighScores();
         Intent myIntent = new Intent(getContext(), GameOver.class);
         myIntent.putExtra("score", "" + snake.getScore());

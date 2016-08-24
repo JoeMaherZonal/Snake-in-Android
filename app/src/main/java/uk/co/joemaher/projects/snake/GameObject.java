@@ -1,6 +1,7 @@
 package uk.co.joemaher.projects.snake;
 
 import android.graphics.Bitmap;
+import android.graphics.Canvas;
 import android.graphics.Rect;
 
 /**
@@ -65,5 +66,12 @@ abstract class GameObject {
     {
         Rect gameObjectRectangle = new Rect(x, y, x+width, y+height);
         return gameObjectRectangle;
+    }
+
+    public void draw(Canvas canvas){
+        canvas.drawBitmap(image, x, y, null);
+        if(x<0){
+            canvas.drawBitmap(image, x+GameController.WIDTH, y+GameController.HEIGHT, null);
+        }
     }
 }

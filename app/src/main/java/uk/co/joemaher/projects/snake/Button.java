@@ -3,7 +3,7 @@ package uk.co.joemaher.projects.snake;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 
-public class Button extends GameObject implements Drawabale {
+public class Button extends GameObject {
 
     private long timeImageChanged;
     private Bitmap clickedImage;
@@ -22,7 +22,6 @@ public class Button extends GameObject implements Drawabale {
             canvas.drawBitmap(image, x + GameController.WIDTH, y + GameController.HEIGHT, null);
         }
     }
-
 
     public void updateImage()
     {

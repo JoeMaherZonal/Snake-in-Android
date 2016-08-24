@@ -3,7 +3,7 @@ package uk.co.joemaher.projects.snake;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 
-public class SnakeBody extends GameObject implements Drawabale {
+public class SnakeBody extends GameObject {
 
     DirectionType currentDirection;
 

@@ -5,9 +5,11 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Rect;
+import android.util.Log;
+
 import java.util.ArrayList;
 
-public class Snake extends GameObject implements Drawabale {
+public class Snake extends GameObject {
 
     private ArrayList<SnakeBody> body;
     private DirectionType currentDirection;
@@ -39,25 +41,25 @@ public class Snake extends GameObject implements Drawabale {
 
     public void update(Context context) {
         long elapsed = (System.nanoTime() - this.timeSinceUpdate) / 1000000;
-        Snake holder = this;
-        SnakeBody bodyHolder;
-
+        //controls snakes 'flow'
         if (elapsed > speed) {
-            if (currentDirection == DirectionType.UP) {
-                updateBody(context);
-                setY(getY() - 100);
-            }
-            if (currentDirection == DirectionType.DOWN) {
-                updateBody(context);
-                setY(getY() + 100);
-            }
-            if (currentDirection == DirectionType.LEFT) {
-                updateBody(context);
-                setX(getX() - 100);
-            }
-            if (currentDirection == DirectionType.RIGHT) {
-                updateBody(context);
-                setX(getX() + 100);
+            switch (this.currentDirection) {
+                case UP:
+                    updateBody(context);
+                    setY(getY() - 100);
+                    break;
+                case DOWN:
+                    updateBody(context);
+                    setY(getY() + 100);
+                    break;
+                case LEFT:
+                    updateBody(context);
+                    setX(getX() - 100);
+                    break;
+                case RIGHT:
+                    updateBody(context);
+                    setX(getX() + 100);
+                    break;
             }
             this.timeSinceUpdate = System.nanoTime();
         }
@@ -107,22 +109,30 @@ public class Snake extends GameObject implements Drawabale {
     }
 
     public void alignHeadImage() {
-        if (this.currentDirection == DirectionType.UP) {
-            this.image = upImage;
-        }
-        if (this.currentDirection == DirectionType.DOWN) {
-            this.image = downImage;
-        }
-        if (this.currentDirection == DirectionType.LEFT) {
-            this.image = leftImage;
-        }
-        if (this.currentDirection == DirectionType.RIGHT) {
-            this.image = rightImage;
+        switch (this.currentDirection) {
+            case UP:
+                this.image = upImage;
+                break;
+            case DOWN:
+                this.image = downImage;
+                break;
+            case LEFT:
+                this.image = leftImage;
+                break;
+            case RIGHT:
+                this.image = rightImage;
+                break;
         }
     }
 
     public ArrayList<SnakeBody> getBody() {
         return this.body;
+    }
+
+    public void removeFromBody(){
+        if(body.size() > 0) {
+            this.body.remove(body.size() - 1);
+        }
     }
 
     public void addToBody(Context context) {
@@ -175,38 +185,32 @@ public class Snake extends GameObject implements Drawabale {
         this.body.get(0).setImage(BitmapFactory.decodeResource(context.getResources(), R.drawable.snake_body_full));
     }
 
-    public void checkforWallCollisions(){
-        if(this.getY() < 200){
-            this.setY(this.getY() + 1400);
-            return;
-        }
-        if(this.getY() > 1500) {
-            this.setY(this.getY() - 1400);
-            return;
-        }
-        if(this.getX() < 200){
-            this.setX(this.getX() + 1800);
-            return;
-        }
-        if(this.getX() > 1900){
-            this.setX(this.getX() - 1800);
-            return;
-        }
-    }
 
     public void checkForCollisionWithItem(ItemBag itemBag, Context context){
-        for(int i = 0; i < itemBag.getBag().size(); i++){
-            if(collision(this, itemBag.getBag().get(i))){
-                this.addToBody(context);
-                itemBag.removeItem(i);
-                increaseSpeed();
+        for(int i = 0; i < itemBag.getBag().size(); i++) {
+            if (collision(this, (GameObject) itemBag.getBag().get(i))) {
+                String className = String.valueOf(itemBag.getBag().get(i).getClass().getName());
+//                Log.d("Snake", className);
+                switch (className) {
+                    case "uk.co.joemaher.projects.snake.Apple":
+                        itemBag.getBag().get(i).adjustGame(context, this);
+                        itemBag.removeItem(i);
+                        break;
+                    case "uk.co.joemaher.projects.snake.BadApple":
+                        itemBag.getBag().get(i).adjustGame(context, this);
+                        itemBag.removeItem(i);
+                        break;
+                    case "uk.co.joemaher.projects.snake.RedApple":
+                        itemBag.getBag().get(i).adjustGame(context, this);
+                        itemBag.removeItem(i);
+                        break;
+                }
             }
         }
     }
 
-
-    public void increaseSpeed(){
-        this.speed = this.speed * 0.99;
+    public void increaseSpeedCustom(Double speed){
+        this.speed = this.speed * speed;
     }
 
     public boolean collision(GameObject a, GameObject b){
@@ -219,7 +223,7 @@ public class Snake extends GameObject implements Drawabale {
 
     public double getSpeed(){
         int x = (int)Math.round(this.speed);
-
+        //some math to represent a score that looks normally progressive
         return (500 - x) / 5 + 1;
     }
 

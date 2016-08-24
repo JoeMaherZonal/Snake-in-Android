@@ -39,23 +39,23 @@ public class MainMenu extends Activity {
         startGameBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                final EditText edittext = new EditText(getBaseContext());
-                edittext.setTextColor(Color.parseColor("#000000"));
-                new AlertDialog.Builder(MainMenu.this, R.style.PopUpTheme)
-                    .setTitle("What's your name?")
-                    .setView(edittext)
-                    .setPositiveButton("Play", new DialogInterface.OnClickListener() {
-                        public void onClick(DialogInterface dialog, int whichButton) {
-                            String name = edittext.getText().toString();
-                            Intent intent = new Intent(MainMenu.this, Game.class);
-                            intent.putExtra("playerName", name);
-                            startActivity(intent);
-                        }
-                    }).setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+            final EditText edittext = new EditText(getBaseContext());
+            edittext.setTextColor(Color.parseColor("#000000"));
+            new AlertDialog.Builder(MainMenu.this, R.style.PopUpTheme)
+                .setTitle("What's your name?")
+                .setView(edittext)
+                .setPositiveButton("Play", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int whichButton) {
-                        //return
+                    String name = edittext.getText().toString();
+                    Intent intent = new Intent(MainMenu.this, Game.class);
+                    intent.putExtra("playerName", name);
+                    startActivity(intent);
                     }
-                }).show();
+                }).setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog, int whichButton) {
+                    //return
+                }
+            }).show();
             }
         });
 
