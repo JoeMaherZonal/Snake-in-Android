@@ -1,6 +1,7 @@
 package uk.co.joemaher.projects.snake;
 
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Rect;
 
@@ -15,7 +16,7 @@ abstract class GameObject {
     protected int height;
 
     public GameObject(Bitmap image, int x, int y, int width, int height){
-        this.image = image;
+        this.image = Bitmap.createScaledBitmap(image,width, height, true);
         this.x = x;
         this.y = y;
         this.width = width;
@@ -23,7 +24,7 @@ abstract class GameObject {
     }
 
     public void setImage(Bitmap image){
-        this.image = image;
+        this.image = Bitmap.createScaledBitmap(image,width, height, true);
     }
 
     public Bitmap getImage(){

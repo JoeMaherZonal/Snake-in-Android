@@ -3,7 +3,9 @@ package uk.co.joemaher.projects.snake;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Point;
 import android.os.Bundle;
+import android.view.Display;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
@@ -35,20 +37,20 @@ public class HighScores extends Activity {
         thirdHighScore = (TextView)findViewById(R.id.third_highscore_txtview);
         mainMenuBtn = (android.widget.Button)findViewById(R.id.main_menu_btn);
 
-        mainMenuBtn.setX(440);
-        mainMenuBtn.setY(200);
+        mainMenuBtn.setX(getWidthPerc(0.78));
+        mainMenuBtn.setY(getHeightPerc(0.8));
 
         firstHighScore.setTextSize(60);
-        firstHighScore.setX(170);
-        firstHighScore.setY(240);
-
+        firstHighScore.setX(getWidthPerc(0.12));
+        firstHighScore.setY(getHeightPerc(0.32));
+//
         secondHighScore.setTextSize(60);
-        secondHighScore.setX(170);
-        secondHighScore.setY(240);
-
+        secondHighScore.setX(getWidthPerc(0.12));
+        secondHighScore.setY(getHeightPerc(0.5));
+//
         thirdHighScore.setTextSize(60);
-        thirdHighScore.setX(170);
-        thirdHighScore.setY(240);
+        thirdHighScore.setX(getWidthPerc(0.12));
+        thirdHighScore.setY(getHeightPerc(0.68));
 
 
 
@@ -73,5 +75,22 @@ public class HighScores extends Activity {
         });
 
     }
+
+    public float getHeightPerc(double perc){
+        Point size = new Point();
+        Display display = getWindowManager().getDefaultDisplay();
+        display.getSize(size);
+        double heightPerc = size.y * perc;
+        return (float) heightPerc;
+    }
+
+    public float getWidthPerc(double perc){
+        Point size = new Point();
+        Display display = getWindowManager().getDefaultDisplay();
+        display.getSize(size);
+        double widthPerc = size.x * perc;
+        return (float) widthPerc;
+    }
+
 
 }

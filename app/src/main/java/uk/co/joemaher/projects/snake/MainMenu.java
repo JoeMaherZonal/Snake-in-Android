@@ -2,10 +2,14 @@ package uk.co.joemaher.projects.snake;
 
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
+import android.graphics.Point;
 import android.os.Bundle;
+import android.util.Log;
+import android.view.Display;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
@@ -26,15 +30,11 @@ public class MainMenu extends Activity {
         startGameBtn = (android.widget.Button)findViewById(R.id.new_game_btn);
         highScoreBtn = (android.widget.Button)findViewById(R.id.high_scores_btn);
         settingsBtn = (android.widget.Button)findViewById(R.id.settings_btn);
+        startGameBtn.setY(getHeightPerc(0.50));
 
-        startGameBtn.setX(20);
-        startGameBtn.setY(400);
+        highScoreBtn.setY(getHeightPerc(0.63));
 
-        highScoreBtn.setX(20);
-        highScoreBtn.setY(410);
-
-        settingsBtn.setX(20);
-        settingsBtn.setY(420);
+        settingsBtn.setY(getHeightPerc(0.76));
 
         startGameBtn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -74,6 +74,22 @@ public class MainMenu extends Activity {
                 //maybe...
             }
         });
+    }
+
+    public float getWidthPerc(double perc){
+        Point size = new Point();
+        Display display = getWindowManager().getDefaultDisplay();
+        display.getSize(size);
+        double widthPerc = size.x * perc;
+        return (float) widthPerc;
+    }
+
+    public float getHeightPerc(double perc){
+        Point size = new Point();
+        Display display = getWindowManager().getDefaultDisplay();
+        display.getSize(size);
+        double heightPerc = size.y * perc;
+        return (float) heightPerc;
     }
 
 }

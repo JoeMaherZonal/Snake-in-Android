@@ -11,17 +11,11 @@ public class Button extends GameObject {
 
     public Button(Bitmap mainImage, Bitmap clickedImage, int x, int y, int width, int height) {
         super(mainImage, x, y, width, height);
-        this.clickedImage = clickedImage;
+        this.clickedImage = Bitmap.createScaledBitmap(clickedImage,width, height, true);
         this.clicked = false;
         this.timeImageChanged = System.nanoTime();
     }
 
-    public void draw(Canvas canvas) {
-        canvas.drawBitmap(image, x, y, null);
-        if (x < 0) {
-            canvas.drawBitmap(image, x + GameController.WIDTH, y + GameController.HEIGHT, null);
-        }
-    }
 
     public void updateImage()
     {

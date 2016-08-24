@@ -19,17 +19,19 @@ public class Snake extends GameObject {
     private Bitmap downImage;
     private Bitmap leftImage;
     private Bitmap rightImage;
+    private int moveUnit;
 
 
-    public Snake(Bitmap image, Bitmap upImage, Bitmap downImage, Bitmap leftImage, Bitmap rightImage, int x, int y, int width, int height) {
+    public Snake(Bitmap image, Bitmap upImage, Bitmap downImage, Bitmap leftImage, Bitmap rightImage, int x, int y, int width, int height, int moveUnit) {
         super(image, x, y, width, height);
         this.body = new ArrayList<SnakeBody>();
         this.currentDirection = DirectionType.UP;
         this.speed = 500.0;
-        this.upImage = upImage;
-        this.downImage = downImage;
-        this.rightImage = rightImage;
-        this.leftImage = leftImage;
+        this.upImage = Bitmap.createScaledBitmap(upImage,width, height, true);
+        this.downImage = Bitmap.createScaledBitmap(downImage,width, height, true);
+        this.rightImage = Bitmap.createScaledBitmap(rightImage,width, height, true);
+        this.leftImage = Bitmap.createScaledBitmap(leftImage,width, height, true);
+        this.moveUnit = moveUnit;
     }
 
     public void draw(Canvas canvas) {
@@ -39,6 +41,10 @@ public class Snake extends GameObject {
         }
     }
 
+    public int getMoveUnit(){
+        return this.moveUnit;
+    }
+
     public void update(Context context) {
         long elapsed = (System.nanoTime() - this.timeSinceUpdate) / 1000000;
         //controls snakes 'flow'
@@ -46,19 +52,19 @@ public class Snake extends GameObject {
             switch (this.currentDirection) {
                 case UP:
                     updateBody(context);
-                    setY(getY() - 100);
+                    setY(getY() - moveUnit);
                     break;
                 case DOWN:
                     updateBody(context);
-                    setY(getY() + 100);
+                    setY(getY() + moveUnit);
                     break;
                 case LEFT:
                     updateBody(context);
-                    setX(getX() - 100);
+                    setX(getX() - moveUnit);
                     break;
                 case RIGHT:
                     updateBody(context);
-                    setX(getX() + 100);
+                    setX(getX() + moveUnit);
                     break;
             }
             this.timeSinceUpdate = System.nanoTime();
@@ -70,7 +76,7 @@ public class Snake extends GameObject {
         DirectionType directionHolder = currentDirection;
         int xHolder = this.x;
         int yHolder = this.y;
-        Bitmap imageHolder = BitmapFactory.decodeResource(context.getResources(), R.drawable.snake_body);
+        Bitmap imageHolder = Bitmap.createScaledBitmap(BitmapFactory.decodeResource(context.getResources(), R.drawable.snake_body),width, height, true);
         DirectionType directionHolder2 = currentDirection;
         int xHolder2;
         int yHolder2;
@@ -143,20 +149,20 @@ public class Snake extends GameObject {
         if (body.size() == 0) {
             switch (currentDirection) {
                 case UP:
-                    y = getY() + 100;
+                    y = getY() + moveUnit;
                     x = getX();
                     break;
                 case DOWN:
-                    y = getY() - 100;
+                    y = getY() - moveUnit;
                     x = getX();
                     break;
                 case LEFT:
                     y = getY();
-                    x = getX() + 100;
+                    x = getX() + moveUnit;
                     break;
                 case RIGHT:
                     y = getY();
-                    x = getX() - 100;
+                    x = getX() - moveUnit;
                     break;
             }
         } else {
@@ -164,24 +170,24 @@ public class Snake extends GameObject {
             direction = lastBodyPart.getCurrentDirection();
                 switch (direction) {
                     case UP:
-                        y = lastBodyPart.getY() + 100;
+                        y = lastBodyPart.getY() + moveUnit;
                         x = lastBodyPart.getX();
                         break;
                     case DOWN:
-                        y = lastBodyPart.getY() - 100;
+                        y = lastBodyPart.getY() - moveUnit;
                         x = lastBodyPart.getX();
                         break;
                     case LEFT:
                         y = lastBodyPart.getY();
-                        x = lastBodyPart.getX() + 100;
+                        x = lastBodyPart.getX() + moveUnit;
                         break;
                     case RIGHT:
                         y = lastBodyPart.getY();
-                        x = lastBodyPart.getX() - 100;
+                        x = lastBodyPart.getX() - moveUnit;
                         break;
                 }
         }
-        this.body.add(new SnakeBody(BitmapFactory.decodeResource(context.getResources(), R.drawable.snake_body), x, y, 100, 100, direction));
+        this.body.add(new SnakeBody(BitmapFactory.decodeResource(context.getResources(), R.drawable.snake_body), x, y, 50, 50, direction));
         this.body.get(0).setImage(BitmapFactory.decodeResource(context.getResources(), R.drawable.snake_body_full));
     }
 

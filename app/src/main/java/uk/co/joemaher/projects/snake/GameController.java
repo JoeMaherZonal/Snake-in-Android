@@ -3,6 +3,7 @@ package uk.co.joemaher.projects.snake;
 
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
@@ -17,8 +18,9 @@ import java.util.Random;
 
 public class GameController extends SurfaceView implements SurfaceHolder.Callback{
 
-    public static final int WIDTH = 3200;
-    public static final int HEIGHT = 2000;
+    public final static int WIDTH = 1600 ;
+    public final static int HEIGHT = 1000 ;
+    public int height;
     private GameThread thread;
     private Background background;
     private WallBlock block;
@@ -45,6 +47,7 @@ public class GameController extends SurfaceView implements SurfaceHolder.Callbac
         this.name = name;
     }
 
+
     @Override
     public void surfaceChanged(SurfaceHolder holder, int format, int width, int height){}
 
@@ -67,7 +70,7 @@ public class GameController extends SurfaceView implements SurfaceHolder.Callbac
     @Override
     public void surfaceCreated(SurfaceHolder holder){
         walls = new ArrayList<WallBlock>();
-        background = new Background(BitmapFactory.decodeResource(getResources(), R.drawable.new_background),0 ,0, 0, 0);
+        background = new Background(BitmapFactory.decodeResource(getResources(), R.drawable.nogrid_background),0 , 0, 1600, 1000);
         itemBag = new ItemBag();
         createButtons();
         createWalls();
@@ -79,30 +82,30 @@ public class GameController extends SurfaceView implements SurfaceHolder.Callbac
     }
 
     public void createWalls(){
-        int x = 100;
-        int y = 100;
+        int x = 50;
+        int y = 50;
         for(int i = 0; i < 19; i++){
-            walls.add(new WallBlock(BitmapFactory.decodeResource(getResources(), R.drawable.blue_block),x ,y, 100, 100));
-            x+=100;
+            walls.add(new WallBlock(BitmapFactory.decodeResource(getResources(), R.drawable.blue_block),x ,y, 50, 50));
+            x+=50;
         }
         for(int i = 0; i < 15; i++){
-            walls.add(new WallBlock(BitmapFactory.decodeResource(getResources(), R.drawable.blue_block), x, y, 100, 100));
-            y+=100;
+            walls.add(new WallBlock(BitmapFactory.decodeResource(getResources(), R.drawable.blue_block), x, y, 50, 50));
+            y+=50;
         }
         for(int i = 0; i < 19; i++){
-            walls.add(new WallBlock(BitmapFactory.decodeResource(getResources(), R.drawable.blue_block), x, y, 100, 100));
-            x-=100;
+            walls.add(new WallBlock(BitmapFactory.decodeResource(getResources(), R.drawable.blue_block), x, y, 50, 50));
+            x-=50;
         }
         for(int i = 0; i < 15; i++){
-            walls.add(new WallBlock(BitmapFactory.decodeResource(getResources(), R.drawable.blue_block), x, y, 100, 100));
-            y-=100;
+            walls.add(new WallBlock(BitmapFactory.decodeResource(getResources(), R.drawable.blue_block), x, y, 50, 50));
+            y-=50;
         }
     }
 
     public void setDrawableText(){
         paint = new Paint();
         paint.setColor(Color.argb(255, 249, 129, 0));
-        paint.setTextSize(100);
+        paint.setTextSize(80);
     }
 
     public void createSnake(){
@@ -110,25 +113,46 @@ public class GameController extends SurfaceView implements SurfaceHolder.Callbac
             BitmapFactory.decodeResource(getResources(), R.drawable.snake_head_up),
             BitmapFactory.decodeResource(getResources(), R.drawable.snake_head_down),
             BitmapFactory.decodeResource(getResources(), R.drawable.snake_head_left),
-            BitmapFactory.decodeResource(getResources(), R.drawable.snake_head_right),1000 ,1000, 95, 95);
+            BitmapFactory.decodeResource(getResources(), R.drawable.snake_head_right),500 ,500, 50, 50, 50);
     }
 
 
     public void createButtons(){
-        upButton = new Button(BitmapFactory.decodeResource(getResources(), R.drawable.up_arrow),BitmapFactory.decodeResource(getResources(), R.drawable.up_arrow_clicked), 2500, 800, 150, 150);
-        downButton = new Button(BitmapFactory.decodeResource(getResources(), R.drawable.down_arrow),BitmapFactory.decodeResource(getResources(), R.drawable.down_arrow_clicked), 2500, 1400, 150, 150);
-        leftButton = new Button(BitmapFactory.decodeResource(getResources(), R.drawable.left_arrow),BitmapFactory.decodeResource(getResources(), R.drawable.left_arrow_clicked), 2200, 1100, 150, 150);
-        rightButton = new Button(BitmapFactory.decodeResource(getResources(), R.drawable.right_arrow),BitmapFactory.decodeResource(getResources(), R.drawable.right_arrow_clicked), 2800, 1100, 150, 150);
-        pauseButton = new Button(BitmapFactory.decodeResource(getResources(), R.drawable.pause),BitmapFactory.decodeResource(getResources(), R.drawable.pause_clicked), 2900, 100, 100, 100);
-        exitGameButton = new Button(BitmapFactory.decodeResource(getResources(), R.drawable.exit_game),BitmapFactory.decodeResource(getResources(), R.drawable.exit_game), 2200, 100, 100, 100);
-        scoreText = new Button(BitmapFactory.decodeResource(getResources(), R.drawable.score_text),BitmapFactory.decodeResource(getResources(), R.drawable.score_text), 2200, 450, 100, 100);
+        upButton = new Button(BitmapFactory.decodeResource(getResources(), R.drawable.up_arrow),BitmapFactory.decodeResource(getResources(), R.drawable.up_arrow_clicked), 1250, 400, 150, 150);
+        downButton = new Button(BitmapFactory.decodeResource(getResources(), R.drawable.down_arrow),BitmapFactory.decodeResource(getResources(), R.drawable.down_arrow_clicked), 1250, 700, 150, 150);
+        leftButton = new Button(BitmapFactory.decodeResource(getResources(), R.drawable.left_arrow),BitmapFactory.decodeResource(getResources(), R.drawable.left_arrow_clicked), 1100, 550, 150, 150);
+        rightButton = new Button(BitmapFactory.decodeResource(getResources(), R.drawable.right_arrow),BitmapFactory.decodeResource(getResources(), R.drawable.right_arrow_clicked), 1400, 550, 150, 150);
+        pauseButton = new Button(BitmapFactory.decodeResource(getResources(), R.drawable.pause),BitmapFactory.decodeResource(getResources(), R.drawable.pause_clicked), 1400, 50, 100, 100);
+        exitGameButton = new Button(BitmapFactory.decodeResource(getResources(), R.drawable.exit_game),BitmapFactory.decodeResource(getResources(), R.drawable.exit_game), 1150, 50, 100, 100);
+        scoreText = new Button(BitmapFactory.decodeResource(getResources(), R.drawable.score_text),BitmapFactory.decodeResource(getResources(), R.drawable.score_text), 1100, 200, 200, 100);
 
     }
         //Button onclick events ---------------------
 
+    public int calcHeight(int perc){
+        int heightUnit = getHeight() /100;
+        return heightUnit * perc;
+    }
+
+    public int calcWidth(int perc){
+        int widthtUnit = getHeight() /100;
+        return widthtUnit * perc;
+    }
+
+    public int getWidthPercentage(){
+//        double xPercent = Math.floor(event.getRawX()) / getWidth() * 100;
+//        double yPercent = Math.floor(event.getRawY()) / getHeight() * 100;
+        return 0;
+    }
+
     public void checkForButtonClick(MotionEvent event){
+        int widthUnit = getWidth() /100;
+        int heightUnit = getHeight() /100;
+        double xPercent = Math.floor(event.getRawX()) / getWidth() * 100;
+        double yPercent = Math.floor(event.getRawY()) / getHeight() * 100;
+
         //up
-        if(event.getRawX() > 935 && event.getRawX() < 1049 && event.getRawY() > 325 && event.getRawY() < 431){
+        if(xPercent > 76 && xPercent < 90 && yPercent > 39 && yPercent < 56){
             System.out.println("Up Button Clicked");
             upButton.swapImages();
             upButton.click();
@@ -136,7 +160,7 @@ public class GameController extends SurfaceView implements SurfaceHolder.Callbac
             return;
         }
         //down
-        if(event.getRawX() > 933 && event.getRawX() < 1042 && event.getRawY() > 569 && event.getRawY() < 665){
+        if(xPercent > 76 && xPercent < 90 && yPercent > 68 && yPercent < 85){
             System.out.println("Down Button Clicked");
             downButton.swapImages();
             downButton.click();
@@ -144,7 +168,7 @@ public class GameController extends SurfaceView implements SurfaceHolder.Callbac
             return;
         }
         //left
-        if(event.getRawX() > 826 && event.getRawX() < 929 && event.getRawY() > 444 && event.getRawY() < 558){
+        if(xPercent > 66 && xPercent < 80 && yPercent > 50 && yPercent < 74){
             System.out.println("Left Button Clicked");
             leftButton.swapImages();
             leftButton.click();
@@ -152,7 +176,7 @@ public class GameController extends SurfaceView implements SurfaceHolder.Callbac
             return;
         }
         //right
-        if(event.getRawX() > 1054 && event.getRawX() < 1158 && event.getRawY() > 444 && event.getRawY() < 556){
+        if(xPercent > 85 && xPercent <99 && yPercent > 50 && yPercent < 74){
             System.out.println("Right Button Clicked");
             rightButton.swapImages();
             rightButton.click();
@@ -161,7 +185,7 @@ public class GameController extends SurfaceView implements SurfaceHolder.Callbac
         }
 
         //pause/play
-        if(event.getRawX() > 1080 && event.getRawX() < 1155 && event.getRawY() > 44 && event.getRawY() < 119){
+        if(xPercent > 87 && xPercent <93 && yPercent > 5 && yPercent < 14){
             System.out.println("Pause/Play clicked");
             pauseButton.swapImages();
             if(!gamePaused){
@@ -169,15 +193,10 @@ public class GameController extends SurfaceView implements SurfaceHolder.Callbac
             }else{
                 this.gamePaused = false;
             }
-            SavedTextPreferences test = new SavedTextPreferences();
-            Score newScore1 = new Score("Joe", 20);
-            Score newScore2 = new Score("Charlie", 40);
-            test.updateHighScores(getContext(), newScore1);
-            test.updateHighScores(getContext(), newScore2);
             System.out.println("Paused:" + gamePaused);
         }
         //exit game
-        if(event.getRawX() > 822 && event.getRawX() < 892 && event.getRawY() > 44 && event.getRawY() < 112){
+        if(xPercent > 71 && xPercent <78 && yPercent > 5 && yPercent < 14){
             forceGameOver();
         }
     }
@@ -185,7 +204,13 @@ public class GameController extends SurfaceView implements SurfaceHolder.Callbac
     @Override
     public boolean onTouchEvent(MotionEvent event){
         checkForButtonClick(event);
-        System.out.println("X:" + Math.floor(event.getRawX()) + " Y:" + Math.floor(event.getRawY()));
+        double xPercent = Math.floor(event.getRawX()) / getWidth() * 100;
+        double yPercent = Math.floor(event.getRawY()) / getHeight() * 100;
+
+        System.out.println("X:" + xPercent + " Y:" + yPercent);
+
+//        System.out.println("X:" + Math.floor(event.getRawX()) + " Y:" + Math.floor(event.getRawY()));
+        System.out.println("Screen res: " + getHeight() + ":" + getWidth());
         return super.onTouchEvent(event);
     }
 
@@ -215,23 +240,23 @@ public class GameController extends SurfaceView implements SurfaceHolder.Callbac
                 break;
             }
 
-            if( collision(snake, walls.get(i)) && walls.get(i).isSafe() && snake.getY() < 200){
-                snake.setY(snake.getY() + 1400);
+            if( collision(snake, walls.get(i)) && walls.get(i).isSafe() && snake.getY() < 100){
+                snake.setY(snake.getY() + 700);
                 break;
             }
 
-            if(collision(snake, walls.get(i)) && walls.get(i).isSafe() && snake.getY() > 1500) {
-                snake.setY(snake.getY() - 1400);
+            if(collision(snake, walls.get(i)) && walls.get(i).isSafe() && snake.getY() > 750) {
+                snake.setY(snake.getY() - 700);
                 break;
             }
 
-            if(collision(snake, walls.get(i)) && walls.get(i).isSafe() && snake.getX() < 200){
-                snake.setX(snake.getX() + 1800);
+            if(collision(snake, walls.get(i)) && walls.get(i).isSafe() && snake.getX() < 100){
+                snake.setX(snake.getX() + 900);
                 break;
             }
 
-            if(collision(snake, walls.get(i)) && walls.get(i).isSafe() && snake.getX() > 1900){
-                snake.setX(snake.getX() - 1800);
+            if(collision(snake, walls.get(i)) && walls.get(i).isSafe() && snake.getX() > 950){
+                snake.setX(snake.getX() - 900);
                 break;
             }
         }
@@ -271,7 +296,7 @@ public class GameController extends SurfaceView implements SurfaceHolder.Callbac
             drawControls(canvas);
             snake.draw(canvas);
             itemBag.draw(canvas);
-            canvas.drawText("" + snake.getScore(), 2600, 535, paint);
+            canvas.drawText("" + snake.getScore(), 1300, 280, paint);
             //canvas.drawText("Speed: " + snake.getSpeed(), 2200, 500, paint);
             //Must restore canvas to original size or it will continue to scale with each loop
             canvas.restoreToCount(savedState);

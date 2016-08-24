@@ -2,8 +2,10 @@ package uk.co.joemaher.projects.snake;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.graphics.Point;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.Display;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
@@ -32,13 +34,12 @@ public class GameOver extends Activity {
         String name = extras.getString("name");
         scoreView.setText(name + "'s Points: " + score);
 
-
         mainMenuBtn = (android.widget.Button)findViewById(R.id.return_to_main_btn);
 
-        mainMenuBtn.setX(20);
-        mainMenuBtn.setY(450);
-        scoreView.setX(20);
-        scoreView.setY(455);
+        scoreView.setY(getHeightPerc(0.65));
+
+        mainMenuBtn.setY(getHeightPerc(0.77));
+
 
 
         mainMenuBtn.setOnClickListener(new View.OnClickListener() {
@@ -49,6 +50,21 @@ public class GameOver extends Activity {
             }
         });
 
+    }
+    public float getWidthPerc(double perc){
+        Point size = new Point();
+        Display display = getWindowManager().getDefaultDisplay();
+        display.getSize(size);
+        double widthPerc = size.x * perc;
+        return (float) widthPerc;
+    }
+
+    public float getHeightPerc(double perc){
+        Point size = new Point();
+        Display display = getWindowManager().getDefaultDisplay();
+        display.getSize(size);
+        double heightPerc = size.y * perc;
+        return (float) heightPerc;
     }
 
 }

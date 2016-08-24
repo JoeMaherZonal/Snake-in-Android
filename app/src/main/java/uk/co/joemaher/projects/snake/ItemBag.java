@@ -18,16 +18,16 @@ public class ItemBag {
     }
 
     public void addApple(Context context,int x, int y){
-        this.bag.add(new Apple(BitmapFactory.decodeResource(context.getResources(), R.drawable.apple), x, y, 100, 100));
+        this.bag.add(new Apple(BitmapFactory.decodeResource(context.getResources(), R.drawable.apple), x, y, 50, 50));
     }
 
     //unused at the moment, could extend with more levels.
     public void addBadApple(Context context,int x, int y){
-        this.bag.add(new BadApple(BitmapFactory.decodeResource(context.getResources(), R.drawable.unsafe_wall), x, y, 100, 100));
+        this.bag.add(new BadApple(BitmapFactory.decodeResource(context.getResources(), R.drawable.unsafe_wall), x, y, 50, 50));
     }
 
     public void addRedApple(Context context, int x, int y){
-        this.bag.add(new RedApple(BitmapFactory.decodeResource(context.getResources(), R.drawable.red_apple), x, y, 100, 100));
+        this.bag.add(new RedApple(BitmapFactory.decodeResource(context.getResources(), R.drawable.red_apple), x, y, 50, 50));
     }
 
     public void draw(Canvas canvas){
@@ -80,14 +80,14 @@ public class ItemBag {
         Random generator = new Random();
         int y = generator.nextInt(15) + 1;
         if(y == 1){y = 2;}
-        return y * 100;
+        return y * 50;
     }
 
     public int getRandomX(){
         Random generator = new Random();
         int x = generator.nextInt(19) + 1;
         if(x == 1){x = 2;}
-        return x*100;
+        return x*50;
     }
 
     public void update(Context context, Snake snake){

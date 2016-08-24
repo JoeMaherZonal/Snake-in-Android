@@ -65,10 +65,14 @@ public class SavedTextPreferences {
 
     public void orderHighScores(ArrayList<Score> scores){
         //I know this ugly...but it works..
-        Collections.sort(scores, new Comparator<Score>() {
-            @Override public int compare(Score p1, Score p2) {
-                return p2.getScore() - p1.getScore();
-            }});
+        if(scores != null) {
+            Collections.sort(scores, new Comparator<Score>() {
+                @Override
+                public int compare(Score p1, Score p2) {
+                    return p2.getScore() - p1.getScore();
+                }
+            });
+        }
     }
 
     public void checkForNoEntries(Context context, ArrayList<Score> scores){

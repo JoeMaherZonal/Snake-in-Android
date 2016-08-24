@@ -12,12 +12,6 @@ public class SnakeBody extends GameObject {
         this.currentDirection = currentDirection;
     }
 
-    public void draw(Canvas canvas) {
-        canvas.drawBitmap(image, x, y, null);
-        if (x < 0) {
-            canvas.drawBitmap(image, x + GameController.WIDTH, y + GameController.HEIGHT, null);
-        }
-    }
 
     public DirectionType getCurrentDirection(){
         return currentDirection;
